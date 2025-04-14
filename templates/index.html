@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Graphic Design Portfolio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to My Design World 🎨</h1>
+        <div class="portfolio">
+            <h2>My Works</h2>
+            <div class="gallery">
+                <img src="{{ url_for('static', filename='images/abeni\'s burger.jpg') }}" alt="Logo Design">
+                <img src="{{ url_for('static', filename='images/7639.jpg') }}" alt="Poster Design">
+                <img src="{{ url_for('static', filename='images/hamilton f1.jpg') }}" alt="Flyer Design">
+                <img src="{{ url_for('static', filename='images/Cisco 3rd.jpg') }}" alt="Poster Design">
+                <img src="{{ url_for('static', filename='images/FlyerForEpic.jpg') }}" alt="Logo Design">
+                <img src="{{ url_for('static', filename='images/02.jpg') }}" alt="Logo Design">
+                <img src="{{ url_for('static', filename='images/03.jpg') }}" alt="Logo Design">
+                <img src="{{ url_for('static', filename='images/04.jpg') }}" alt="Logo Design">
+                <img src="{{ url_for('static', filename='images/05.jpg') }}" alt="Logo Design">
+                <img src="{{ url_for('static', filename='images/06.jpg') }}" alt="Logo Design">
+                <img src="{{ url_for('static', filename='images/07.png') }}" alt="Logo Design">
+                <img src="{{ url_for('static', filename='images/08.png') }}" alt="Logo Design">
+                <img src="{{ url_for('static', filename='images/09.png') }}" alt="Logo Design">
+                <img src="{{ url_for('static', filename='images/10.png') }}" alt="Logo Design">
+            </div>
+        </div>
+        
+
+        <div class="order-form">
+            <h2>Hire Me</h2>
+            <form action="/submit-order" method="POST">
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <input type="text" name="project_type" placeholder="What Do You Need? (e.g. Logo, Poster)" required>
+                <textarea name="description" placeholder="Project Details..." rows="5" required></textarea>
+                <button type="submit">Send Request</button>
+            </form>
+        </div>
+        <div class="footer">
+            <p>&copy; 2025 Graphic Design Portfolio. All rights reserved.</p>
+            <p>Follow me on <a href="https://www.instagram.com/firaolanbessaofficial" target="_blank">Instagram</a></p>        
+    </div>
+</body>
+</html>
