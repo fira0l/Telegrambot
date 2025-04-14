@@ -1,8 +1,10 @@
-
+import os
 from flask import Flask, request, render_template
 import logging
 import requests
 
+token = os.environ.get("token")
+CHAT_ID = os.environ.get("CHAT_ID")
 app = Flask(__name__)
 
 import telebot
