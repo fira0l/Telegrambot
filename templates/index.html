@@ -1,47 +1,330 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Graphic Design Portfolio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBER DESIGN PORTFOLIO</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Cyber Navbar -->
+    <nav class="navbar">
+        <div class="logo">CYBER_DESIGN</div>
+        <ul>
+            <li><a href="#portfolio">PORTFOLIO</a></li>
+            <li><a href="#hire">HIRE_ME</a></li>
+            <li><a href="#contact">CONTACT</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Container -->
     <div class="container">
-        <h1>Welcome to My Design World 🎨</h1>
-        <div class="portfolio">
-            <h2>My Works</h2>
+        <!-- Cyber Hero Section -->
+        <header class="hero">
+            <h1>WELCOME TO THE CYBER DESIGN MATRIX</h1>
+            <p class="tagline">WHERE CREATIVITY MEETS THE DIGITAL FRONTIER</p>
+            <div class="cyber-divider"></div>
+        </header>
+
+        <!-- Portfolio Section -->
+        <section class="portfolio" id="portfolio">
+            <h2>✨ DIGITAL CREATIONS ✨</h2>
             <div class="gallery">
-                <img src="{{ url_for('static', filename='images/abeni\'s burger.jpg') }}" alt="Logo Design">
-                <img src="{{ url_for('static', filename='images/7639.jpg') }}" alt="Poster Design">
-                <img src="{{ url_for('static', filename='images/hamilton f1.jpg') }}" alt="Flyer Design">
-                <img src="{{ url_for('static', filename='images/Cisco 3rd.jpg') }}" alt="Poster Design">
-                <img src="{{ url_for('static', filename='images/FlyerForEpic.jpg') }}" alt="Logo Design">
-                <img src="{{ url_for('static', filename='images/02.jpg') }}" alt="Logo Design">
-                <img src="{{ url_for('static', filename='images/03.jpg') }}" alt="Logo Design">
-                <img src="{{ url_for('static', filename='images/04.jpg') }}" alt="Logo Design">
-                <img src="{{ url_for('static', filename='images/05.jpg') }}" alt="Logo Design">
-                <img src="{{ url_for('static', filename='images/06.jpg') }}" alt="Logo Design">
-                <img src="{{ url_for('static', filename='images/07.png') }}" alt="Logo Design">
-                <img src="{{ url_for('static', filename='images/08.png') }}" alt="Logo Design">
-                <img src="{{ url_for('static', filename='images/09.png') }}" alt="Logo Design">
-                <img src="{{ url_for('static', filename='images/10.png') }}" alt="Logo Design">
+                <!-- Gallery items with data attributes for lightbox -->
+                <div class="gallery-item" data-image="{{ url_for('static', filename='images/abeni\'s burger.jpg') }}" data-title="BRAND_IDENTITY">
+                    <img src="{{ url_for('static', filename='images/abeni\'s burger.jpg') }}" alt="Logo Design">
+                    <div class="overlay">
+                        <h3>BRAND_IDENTITY</h3>
+                    </div>
+                </div>
+                <div class="gallery-item" data-image="{{ url_for('static', filename='images/7639.jpg') }}" data-title="POSTER_DESIGN">
+                    <img src="{{ url_for('static', filename='images/7639.jpg') }}" alt="Poster Design">
+                    <div class="overlay">
+                        <h3>POSTER_DESIGN</h3>
+                    </div>
+                </div>
+                <div class="gallery-item" data-image="{{ url_for('static', filename='images/hamilton f1.jpg') }}" data-title="MOTORSPORT_ART">
+                    <img src="{{ url_for('static', filename='images/hamilton f1.jpg') }}" alt="Flyer Design">
+                    <div class="overlay">
+                        <h3>MOTORSPORT_ART</h3>
+                    </div>
+                </div>
+                <div class="gallery-item" data-image="{{ url_for('static', filename='images/Cisco 3rd.jpg') }}" data-title="TECH_POSTER">
+                    <img src="{{ url_for('static', filename='images/Cisco 3rd.jpg') }}" alt="Poster Design">
+                    <div class="overlay">
+                        <h3>TECH_POSTER</h3>
+                    </div>
+                </div>
+                <div class="gallery-item" data-image="{{ url_for('static', filename='images/FlyerForEpic.jpg') }}" data-title="EVENT_FLYER">
+                    <img src="{{ url_for('static', filename='images/FlyerForEpic.jpg') }}" alt="Flyer Design">
+                    <div class="overlay">
+                        <h3>EVENT_FLYER</h3>
+                    </div>
+                </div>
+                <div class="gallery-item" data-image="{{ url_for('static', filename='images/02.jpg') }}" data-title="DIGITAL_ART_01">
+                    <img src="{{ url_for('static', filename='images/02.jpg') }}" alt="Artwork">
+                    <div class="overlay">
+                        <h3>DIGITAL_ART_01</h3>
+                    </div>
+                </div>
+                <div class="gallery-item" data-image="{{ url_for('static', filename='images/03.jpg') }}" data-title="DIGITAL_ART_02">
+                    <img src="{{ url_for('static', filename='images/03.jpg') }}" alt="Artwork">
+                    <div class="overlay">
+                        <h3>DIGITAL_ART_02</h3>
+                    </div>
+                </div>
+                <div class="gallery-item" data-image="{{ url_for('static', filename='images/04.jpg') }}" data-title="DIGITAL_ART_03">
+                    <img src="{{ url_for('static', filename='images/04.jpg') }}" alt="Artwork">
+                    <div class="overlay">
+                        <h3>DIGITAL_ART_03</h3>
+                    </div>
+                </div>
+                <div class="gallery-item" data-image="{{ url_for('static', filename='images/05.jpg') }}" data-title="DIGITAL_ART_04">
+                    <img src="{{ url_for('static', filename='images/05.jpg') }}" alt="Artwork">
+                    <div class="overlay">
+                        <h3>DIGITAL_ART_04</h3>
+                    </div>
+                </div>
+                <div class="gallery-item" data-image="{{ url_for('static', filename='images/06.jpg') }}" data-title="DIGITAL_ART_05">
+                    <img src="{{ url_for('static', filename='images/06.jpg') }}" alt="Artwork">
+                    <div class="overlay">
+                        <h3>DIGITAL_ART_05</h3>
+                    </div>
+                </div>
+                <div class="gallery-item" data-image="{{ url_for('static', filename='images/07.png') }}" data-title="DIGITAL_ART_06">
+                    <img src="{{ url_for('static', filename='images/07.png') }}" alt="Artwork">
+                    <div class="overlay">
+                        <h3>DIGITAL_ART_06</h3>
+                    </div>
+                </div>
+                <div class="gallery-item" data-image="{{ url_for('static', filename='images/08.png') }}" data-title="DIGITAL_ART_07">
+                    <img src="{{ url_for('static', filename='images/08.png') }}" alt="Artwork">
+                    <div class="overlay">
+                        <h3>DIGITAL_ART_07</h3>
+                    </div>
+                </div>
+                <div class="gallery-item" data-image="{{ url_for('static', filename='images/09.png') }}" data-title="DIGITAL_ART_08">
+                    <img src="{{ url_for('static', filename='images/09.png') }}" alt="Artwork">
+                    <div class="overlay">
+                        <h3>DIGITAL_ART_08</h3>
+                    </div>
+                </div>
+                <div class="gallery-item" data-image="{{ url_for('static', filename='images/10.png') }}" data-title="DIGITAL_ART_09">
+                    <img src="{{ url_for('static', filename='images/10.png') }}" alt="Artwork">
+                    <div class="overlay">
+                        <h3>DIGITAL_ART_09</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cyber Divider -->
+        <div class="cyber-divider-full"></div>
+
+        <!-- Hire Me Section -->
+        <section class="order-form" id="hire">
+            <h2>🚀 INITIATE PROJECT</h2>
+            <form action="/submit-order" method="POST">
+                <input type="text" name="name" placeholder="ENTER YOUR NAME" required>
+                <input type="email" name="email" placeholder="ENTER YOUR EMAIL" required>
+                <input type="text" name="project_type" placeholder="PROJECT TYPE (LOGO, POSTER, ETC)" required>
+                <textarea name="description" placeholder="PROJECT SPECIFICATIONS..." rows="5" required></textarea>
+                <button type="submit">
+                    <span class="btn-text">TRANSMIT REQUEST</span>
+                    <span class="btn-glow"></span>
+                </button>
+            </form>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer" id="contact">
+            <div class="footer-content">
+                <p>&copy; 2025 CYBER DESIGN MATRIX. ALL SYSTEMS OPERATIONAL.</p>
+                <p>CONNECT ON
+                    <a href="https://www.instagram.com/firaolanbessaofficial" target="_blank">INSTAGRAM</a>
+                    <span class="cyber-dot">•</span>
+                    <a href="https://www.behance.net/firaoldebesa1" target="_blank">BEHANCE</a>
+                    <span class="cyber-dot">•</span>
+                    <a href="https://dribbble.com/Firanova" target="_blank">DRIBBBLE</a>
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-content">
+            <button class="lightbox-close" id="lightboxClose">✕</button>
+            <div class="lightbox-loading" id="lightboxLoading"></div>
+            <img class="lightbox-image" id="lightboxImage" src="" alt="">
+            <div class="lightbox-caption" id="lightboxCaption"></div>
+            <div class="lightbox-nav">
+                <button class="lightbox-prev" id="lightboxPrev">‹</button>
+                <button class="lightbox-next" id="lightboxNext">›</button>
             </div>
         </div>
-        
-
-        <div class="order-form">
-            <h2>Hire Me</h2>
-            <form action="/submit-order" method="POST">
-                <input type="text" name="name" placeholder="Your Name" required>
-                <input type="email" name="email" placeholder="Your Email" required>
-                <input type="text" name="project_type" placeholder="What Do You Need? (e.g. Logo, Poster)" required>
-                <textarea name="description" placeholder="Project Details..." rows="5" required></textarea>
-                <button type="submit">Send Request</button>
-            </form>
-        </div>
-        <div class="footer">
-            <p>&copy; 2025 Graphic Design Portfolio. All rights reserved.</p>
-            <p>Follow me on <a href="https://www.instagram.com/firaolanbessaofficial" target="_blank">Instagram</a></p>        
     </div>
+
+    <!-- Cyberpunk Script -->
+    <script>
+        // Lightbox functionality
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImage = document.getElementById('lightboxImage');
+        const lightboxCaption = document.getElementById('lightboxCaption');
+        const lightboxClose = document.getElementById('lightboxClose');
+        const lightboxPrev = document.getElementById('lightboxPrev');
+        const lightboxNext = document.getElementById('lightboxNext');
+        const lightboxLoading = document.getElementById('lightboxLoading');
+
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        let currentImageIndex = 0;
+        const images = Array.from(galleryItems);
+
+        // Open lightbox
+        function openLightbox(index) {
+            currentImageIndex = index;
+            const item = images[index];
+            const imageSrc = item.getAttribute('data-image');
+            const imageTitle = item.getAttribute('data-title');
+
+            lightboxLoading.style.display = 'block';
+            lightboxImage.style.display = 'none';
+            lightbox.classList.add('active');
+
+            lightboxImage.onload = function() {
+                lightboxLoading.style.display = 'none';
+                lightboxImage.style.display = 'block';
+            };
+
+            lightboxImage.src = imageSrc;
+            lightboxCaption.textContent = imageTitle;
+
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Navigate to next image
+        function nextImage() {
+            currentImageIndex = (currentImageIndex + 1) % images.length;
+            openLightbox(currentImageIndex);
+        }
+
+        // Navigate to previous image
+        function prevImage() {
+            currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+            openLightbox(currentImageIndex);
+        }
+
+        // Event listeners for gallery items
+        galleryItems.forEach((item, index) => {
+            item.addEventListener('click', () => openLightbox(index));
+        });
+
+        // Lightbox controls
+        lightboxClose.addEventListener('click', closeLightbox);
+        lightboxNext.addEventListener('click', nextImage);
+        lightboxPrev.addEventListener('click', prevImage);
+
+        // Close lightbox on outside click
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('active')) return;
+
+            switch(e.key) {
+                case 'Escape':
+                    closeLightbox();
+                    break;
+                case 'ArrowLeft':
+                    prevImage();
+                    break;
+                case 'ArrowRight':
+                    nextImage();
+                    break;
+            }
+        });
+
+        // Add particle click effect
+        document.addEventListener('click', function(e) {
+            const particles = document.createElement('div');
+            particles.style.position = 'fixed';
+            particles.style.left = e.clientX + 'px';
+            particles.style.top = e.clientY + 'px';
+            particles.style.width = '4px';
+            particles.style.height = '4px';
+            particles.style.background = 'var(--neon-cyan)';
+            particles.style.borderRadius = '50%';
+            particles.style.pointerEvents = 'none';
+            particles.style.boxShadow = '0 0 10px var(--neon-cyan)';
+            particles.style.animation = 'particleFloat 1s ease-out forwards';
+            document.body.appendChild(particles);
+
+            setTimeout(() => {
+                particles.remove();
+            }, 1000);
+        });
+
+        // Add CSS for additional styles
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes particleFloat {
+                0% {
+                    transform: translate(0, 0) scale(1);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translate(${Math.random() * 100 - 50}px, -100px) scale(0);
+                    opacity: 0;
+                }
+            }
+            .cyber-divider {
+                height: 2px;
+                background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+                margin: 30px auto;
+                width: 200px;
+                border-radius: 2px;
+            }
+            .cyber-divider-full {
+                height: 1px;
+                background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-purple), transparent);
+                margin: 50px 0;
+                width: 100%;
+                border-radius: 1px;
+            }
+            .cyber-dot {
+                color: var(--neon-cyan);
+                margin: 0 10px;
+            }
+            .btn-glow {
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+                transition: left 0.5s ease;
+            }
+            .order-form button:hover .btn-glow {
+                left: 100%;
+            }
+            .order-form button {
+                position: relative;
+                overflow: hidden;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 </body>
 </html>
