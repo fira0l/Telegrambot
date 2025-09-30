@@ -70,18 +70,18 @@ Browse through my gallery of work featuring:
 
 ### 📁 **Project Structure**
 graphic-design-portfolio/
-  ├── static/
-  │ ├── css/
-  │ │ └── style.css # Main cyberpunk styles
-  │ └── images/
-  │ ├── abeni's burger.jpg
-  │ ├── 7639.jpg
-  │ └── ... (all portfolio images)
-  ├── templates/
-  │ └── index.html # Main portfolio page
-  ├── main.py # Flask application
-  ├── requirements.txt # Python dependencies
-  └── README.md
+ * ├── static/
+ * │ ├── css/
+ * │ │ └── style.css # Main cyberpunk styles
+ * │ └── images/
+ * │ ├── abeni's burger.jpg
+ * │ ├── 7639.jpg
+ * │ └── ... (all portfolio images)
+ * ├── templates/
+ * │ └── index.html # Main portfolio page
+ * ├── main.py # Flask application
+ * ├── requirements.txt # Python dependencies
+ * └── README.md
 
 
 ### 🏃 **Quick Start**
