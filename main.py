@@ -4,6 +4,7 @@ import logging
 import requests
 from telebot.types import Message, ReplyKeyboardMarkup, KeyboardButton
 import telebot
+import threading
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -17,9 +18,6 @@ bot = telebot.TeleBot(token)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
-
-# Store user data temporarily (in production, use a database)
-user_sessions = {}
 
 
 # Custom keyboard for better user experience
@@ -175,9 +173,7 @@ Here's a glimpse of my creative work:
 • Twitter headers
 
 *Want to see more?* 
-Visit my online portfolio: https://telegrambot-48lt.onrender.com
-
-Or check out my Instagram: @firaolanbessaofficial 📱
+Visit my online portfolio or check out my Instagram: @firaolanbessaofficial 📱
     """
 
     bot.send_message(message.chat.id, portfolio_text, parse_mode='Markdown')
@@ -231,29 +227,25 @@ def pricing_command(message: Message):
 I believe in transparent, fair pricing:
 
 🎨 *Logo Design*
-• Negotiable
 • Basic Logo: $50-$100
 • Complete Brand Package: $150-$300
 
 📄 *Poster/Flyer Design*
-• Negotiable
 • Single Design: $30-$60
 • Multiple Variations: $80-$150
 
 📱 *Social Media Package*
-• Negotiable
 • Monthly Package (10 posts): $200-$400
 • Single Posts: $25 each
 
 🖼️ *Custom Illustrations*
-• Negotiable
 • Simple Illustration: $50-$100
 • Complex Artwork: $100-$250
 
 *Note:* All prices are starting points. Final quotes depend on project complexity and requirements.
 
 💡 *Ready to get a custom quote?*
-Use `/contact` to share your details and I'll provide a personalized estimate!
+Share your contact or send me a message with your project details!
     """
 
     bot.send_message(message.chat.id, pricing_text, parse_mode='Markdown')
@@ -268,11 +260,8 @@ def social_command(message: Message):
 Follow me for daily inspiration and updates:
 
 📸 *Instagram:* @firaolanbessaofficial
-👉 https://instagram.com/firaolanbessaofficial
-
-🎨 *Behance:* https://behance.net/firaoldebesa1
-💼 *Dribbble:* https://dibbble.com/firanova
-🔗 *LinkedIn:* https://linkedin.com/in/firaolanbessaofficial
+🎨 *Behance:* Coming Soon
+💼 *Dribbble:* Coming Soon
 
 *Why follow me?*
 • See my latest work
@@ -388,27 +377,32 @@ def submit_order():
     return render_template('thankyou.html')
 
 
-# Webhook setup (commented out for now)
-# @app.route('/webhook', methods=['POST'])
-# def webhook():
-#     json_str = request.get_data().decode('UTF-8')
-#     update = telebot.types.Update.de_json(json_str)
-#     bot.process_new_updates([update])
-#     return '!', 200
+def start_bot_polling():
+    """Start the bot in polling mode"""
+    try:
+        print("🤖 Starting Telegram Bot in polling mode...")
+        bot.polling(none_stop=True, interval=0, timeout=20)
+    except Exception as e:
+        print(f"❌ Bot polling error: {e}")
+        # Restart polling after a delay
+        import time
+        time.sleep(5)
+        start_bot_polling()
+
 
 if __name__ == "__main__":
-    # Start the bot polling
-    try:
-        print("🤖 Bot is running with enhanced features...")
-        print("💫 Welcome messages are activated!")
-        print("📞 Contact sharing is enabled!")
-        print("🎨 Portfolio commands are ready!")
+    # Start bot polling in a separate thread
+    bot_thread = threading.Thread(target=start_bot_polling)
+    bot_thread.daemon = True
+    bot_thread.start()
 
-        # Start bot polling in a separate thread if needed
-        # import threading
-        # bot_thread = threading.Thread(target=bot.polling, kwargs={'none_stop': True})
-        # bot_thread.start()
+    print("🚀 Bot started successfully!")
+    print("💫 New features activated:")
+    print("   - Warm welcome messages")
+    print("   - Contact sharing")
+    print("   - Interactive menus")
+    print("   - Portfolio commands")
+    print("   - Pricing information")
 
-        app.run("0.0.0.0", port=5000, debug=True)
-    except Exception as e:
-        print(f"❌ An error occurred: {e}")
+    # Start Flask app
+    app.run("0.0.0.0", port=5000, debug=True)
