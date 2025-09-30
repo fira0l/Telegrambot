@@ -227,18 +227,22 @@ def pricing_command(message: Message):
 I believe in transparent, fair pricing:
 
 🎨 *Logo Design*
+• Negotiable
 • Basic Logo: $50-$100
 • Complete Brand Package: $150-$300
 
 📄 *Poster/Flyer Design*
+• Negotiable
 • Single Design: $30-$60
 • Multiple Variations: $80-$150
 
 📱 *Social Media Package*
+• Negotiable
 • Monthly Package (10 posts): $200-$400
 • Single Posts: $25 each
 
 🖼️ *Custom Illustrations*
+• Negotiable
 • Simple Illustration: $50-$100
 • Complex Artwork: $100-$250
 
@@ -260,8 +264,9 @@ def social_command(message: Message):
 Follow me for daily inspiration and updates:
 
 📸 *Instagram:* @firaolanbessaofficial
-🎨 *Behance:* Coming Soon
-💼 *Dribbble:* Coming Soon
+🎨 *Behance:* https://behance.net/firaoldebesa1
+💼 *Dribbble:* https://dribbble.com/firanova
+📱 *LinkedIn:* https://linkedin.com/in/firaolanbessaofficial
 
 *Why follow me?*
 • See my latest work
