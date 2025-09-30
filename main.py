@@ -107,7 +107,7 @@ if __name__ == "__main__":
     try:
         print("Bot is running...")
         # bot.polling(none_stop=True)
-        app.run("0.0.0.0", port=8080, debug=True)
+        app.run("0.0.0.0", port=5000, debug=True)
     except Exception as e:
         print(f"An error occurred: {e}")
         # Optionally, you can add logging or error handling here.
