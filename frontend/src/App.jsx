@@ -19,7 +19,7 @@ function App() {
 
   const loadImages = useCallback((page = 1) => {
     setIsLoading(true)
-    fetch(`/api/images?page=${page}&per_page=6`)
+    fetch(`https://tgbotbackend.up.railway.app/api/images?page=${page}&per_page=6`)
       .then(async (res) => {
         if (!res.ok) throw new Error('Failed to load images')
         const data = await res.json()

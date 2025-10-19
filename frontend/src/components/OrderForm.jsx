@@ -16,7 +16,7 @@ export default function OrderForm() {
 
     try {
       const form = new FormData(formRef.current)
-      const res = await fetch('/submit-order', { method: 'POST', body: form })
+      const res = await fetch('https://tgbotbackend.up.railway.app/submit-order', { method: 'POST', body: form })
       if (!res.ok) throw new Error('Failed to submit. Please try again.')
       setOk(true)
       formRef.current.reset()

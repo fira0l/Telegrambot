@@ -1,7 +1,5 @@
 flask
-telebot
-requests
-flask
+flask-cors
 telebot
 requests
 python-dotenv

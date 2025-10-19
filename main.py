@@ -6,6 +6,7 @@ from telebot.types import Message, ReplyKeyboardMarkup, KeyboardButton
 import telebot
 import threading
 from flask import jsonify, url_for
+from flask_cors import CORS
 from google_drive import GoogleDriveManager
 from werkzeug.utils import secure_filename
 import tempfile
@@ -14,6 +15,9 @@ import json
 # Initialize Flask app
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+
+# Enable CORS for Vercel frontend
+CORS(app, origins=['https://graphicdesign-5roc692hq-firaols-projects-2e4e4ad8.vercel.app'])
 
 # Get environment variables
 token = os.environ.get("token")
@@ -371,7 +375,12 @@ def handle_all_messages(message: Message):
 # Flask routes for your website
 @app.route('/')
 def home():
-    return render_template('index.html')
+    # Redirect to Vercel frontend
+    return f'<script>window.location.href="https://graphicdesign-5roc692hq-firaols-projects-2e4e4ad8.vercel.app"</script>'
+
+@app.route('/health')
+def health():
+    return {'status': 'ok', 'message': 'Backend is running'}
 
 
 @app.route('/api/images')
@@ -526,7 +535,8 @@ def submit_order():
     }
     requests.post(url, data=payload)
 
-    return render_template('thankyou.html')
+    # Redirect back to Vercel frontend with success message
+    return f'<script>window.location.href="https://graphicdesign-5roc692hq-firaols-projects-2e4e4ad8.vercel.app?success=true"</script>'
 
 
 def start_bot_polling():
