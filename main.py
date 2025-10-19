@@ -22,40 +22,14 @@ CHAT_ID = os.environ.get("CHAT_ID")
 # Initialize Telegram bot
 bot = telebot.TeleBot(token)
 
-# Initialize Google Drive
+# Initialize Google Drive (disabled in production)
 drive_manager = None
 print("Initializing Google Drive manager...")
 
-# Check if Google credentials are available via environment variables
-google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
-google_client_secret = os.environ.get('GOOGLE_CLIENT_SECRET')
-
-if google_client_id and google_client_secret:
-    try:
-        print("Found Google credentials in environment variables")
-        # Create credentials.json from environment variables
-        credentials_data = {
-            "installed": {
-                "client_id": google_client_id,
-                "project_id": "mygraphicsdesign",
-                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-                "token_uri": "https://oauth2.googleapis.com/token",
-                "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-                "client_secret": google_client_secret,
-                "redirect_uris": ["http://localhost:8080", "urn:ietf:wg:oauth:2.0:oob"]
-            }
-        }
-        
-        import json
-        with open('credentials.json', 'w') as f:
-            json.dump(credentials_data, f)
-        
-        drive_manager = GoogleDriveManager()
-        print("✅ Google Drive manager initialized successfully")
-    except Exception as e:
-        print(f"❌ Failed to initialize Google Drive manager: {e}")
-        print("Google Drive features will be disabled")
-        drive_manager = None
+# Skip Google Drive in production environment (Railway)
+if os.environ.get('RAILWAY_ENVIRONMENT'):
+    print("❌ Google Drive disabled in production environment")
+    drive_manager = None
 elif os.path.exists('credentials.json'):
     try:
         print("Found local credentials.json, attempting to initialize...")
@@ -63,6 +37,7 @@ elif os.path.exists('credentials.json'):
         print("✅ Google Drive manager initialized successfully")
     except Exception as e:
         print(f"❌ Failed to initialize Google Drive manager: {e}")
+        print("Google Drive features will be disabled")
         drive_manager = None
 else:
     print("❌ No Google credentials found - Google Drive features disabled")
