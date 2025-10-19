@@ -232,3 +232,36 @@ Built with ❤️ and neon lights
 "Where creativity meets the digital frontier"
 ⬆ Back to Top
 </div> 
+
+---
+
+## ⚛️ React Frontend (Vite) + Flask Dev Workflow
+
+- Frontend lives in `frontend` (Vite + React).
+- During development, Vite proxies API and static requests to Flask.
+
+### Start Backend (Flask)
+1. Set environment variables `token` and `CHAT_ID`.
+2. From repo root:
+```bash
+python main.py
+```
+Flask runs at `http://localhost:5000`.
+
+### Start Frontend (React)
+From `frontend`:
+```bash
+npm run dev
+```
+Open `http://localhost:5173`.
+
+### Proxy Configuration
+`frontend/vite.config.js` proxies:
+- `/api` -> Flask (for `/api/images`)
+- `/submit-order` -> Flask (form posts)
+- `/static` -> Flask static (reuses CSS/fonts/images)
+
+### React App Notes
+- Global CSS imports `@import '/static/css/style.css';` so the original design is preserved.
+- Gallery fetches from `/api/images` and supports lightbox with keyboard navigation.
+- Order form posts to `/submit-order` (Telegram notification preserved).

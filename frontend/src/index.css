@@ -1,0 +1,20 @@
+@reference "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Remove underlines from all links and buttons */
+a {
+  text-decoration: none !important;
+}
+
+button {
+  text-decoration: none !important;
+}
+
+@layer components {
+  .gradient-text { @apply bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent; }
+  .hover-lift { @apply transition-transform duration-300 hover:-translate-y-2; }
+  .glass { @apply bg-white/10 backdrop-blur-md border border-white/20; }
+  .dark .glass { @apply bg-black/10 backdrop-blur-md border border-white/10; }
+}

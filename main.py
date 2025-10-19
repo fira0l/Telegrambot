@@ -5,9 +5,14 @@ import requests
 from telebot.types import Message, ReplyKeyboardMarkup, KeyboardButton
 import telebot
 import threading
+from flask import jsonify, url_for
+from google_drive import GoogleDriveManager
+from werkzeug.utils import secure_filename
+import tempfile
 
 # Initialize Flask app
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
 # Get environment variables
 token = os.environ.get("token")
@@ -15,6 +20,22 @@ CHAT_ID = os.environ.get("CHAT_ID")
 
 # Initialize Telegram bot
 bot = telebot.TeleBot(token)
+
+# Initialize Google Drive
+drive_manager = None
+print("Initializing Google Drive manager...")
+if os.path.exists('credentials.json'):
+    try:
+        print("Found credentials.json, attempting to initialize...")
+        drive_manager = GoogleDriveManager()
+        print("✅ Google Drive manager initialized successfully")
+    except Exception as e:
+        print(f"❌ Failed to initialize Google Drive manager: {e}")
+        print("This might be due to missing authentication or network issues")
+        print("Google Drive features will be disabled")
+        drive_manager = None
+else:
+    print("❌ credentials.json not found - Google Drive features disabled")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -347,6 +368,127 @@ def handle_all_messages(message: Message):
 def home():
     return render_template('index.html')
 
+
+@app.route('/api/images')
+def api_images():
+    """Return paginated images from both local storage and Google Drive."""
+    page = int(request.args.get('page', 1))
+    per_page = int(request.args.get('per_page', 6))
+    
+    all_images = []
+    
+    # Get local images
+    images_dir = os.path.join(app.static_folder, 'images')
+    if os.path.isdir(images_dir):
+        supported_exts = {'.jpg', '.jpeg', '.png', '.gif', '.webp'}
+        for name in os.listdir(images_dir):
+            ext = os.path.splitext(name)[1].lower()
+            if ext in supported_exts:
+                file_url = url_for('static', filename=f'images/{name}')
+                base = os.path.splitext(name)[0]
+                title = base.replace('_', ' ').replace('-', ' ').title()
+                all_images.append({
+                    'src': file_url,
+                    'title': title,
+                })
+    
+    # Get Google Drive images
+    if drive_manager:
+        try:
+            drive_images = drive_manager.get_all_images()
+            all_images.extend(drive_images)
+        except Exception as e:
+            print(f"Error fetching Google Drive images: {e}")
+    
+    # Calculate pagination
+    total = len(all_images)
+    start = (page - 1) * per_page
+    end = start + per_page
+    paginated_images = all_images[start:end]
+    
+    return jsonify({
+        'images': paginated_images,
+        'pagination': {
+            'page': page,
+            'per_page': per_page,
+            'total': total,
+            'pages': (total + per_page - 1) // per_page,
+            'has_next': end < total,
+            'has_prev': page > 1
+        }
+    })
+
+
+@app.route('/api/upload', methods=['POST'])
+def upload_image():
+    """Upload image to Google Drive."""
+    print("Upload endpoint hit!")
+    
+    print(f"Files: {request.files}")
+    print(f"Form: {request.form}")
+    
+    if 'file' not in request.files:
+        print("No file in request")
+        return jsonify({'error': 'No file provided'}), 400
+    
+    file = request.files['file']
+    title = request.form.get('title', 'Untitled')
+    
+    print(f"File: {file.filename}, Title: {title}")
+    
+    if file.filename == '':
+        print("Empty filename")
+        return jsonify({'error': 'No file selected'}), 400
+    
+    if not file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.webp')):
+        print("Invalid file type")
+        return jsonify({'error': 'Invalid file type'}), 400
+    
+    # Try Google Drive first, fallback to local if not available
+    if drive_manager is None:
+        print("Google Drive manager not initialized - falling back to local storage")
+        try:
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.static_folder, 'images', filename)
+            file.save(filepath)
+            
+            file_url = url_for('static', filename=f'images/{filename}')
+            return jsonify({
+                'success': True, 
+                'data': {
+                    'url': file_url,
+                    'title': title,
+                    'source': 'local'
+                }
+            })
+        except Exception as e:
+            print(f"Local save failed: {e}")
+            return jsonify({'error': 'Upload failed'}), 500
+    
+    # Google Drive upload
+    try:
+        print("Processing Google Drive upload...")
+        
+        # Read file into memory instead of saving to disk
+        file_content = file.read()
+        file.seek(0)  # Reset file pointer
+        
+        print(f"File size: {len(file_content)} bytes")
+        
+        # Upload to Drive using memory buffer
+        result = drive_manager.upload_image_from_memory(file_content, file.filename, title)
+        print(f"Drive upload result: {result}")
+        
+        if result:
+            return jsonify({'success': True, 'data': result})
+        else:
+            return jsonify({'error': 'Upload failed'}), 500
+            
+    except Exception as e:
+        print(f"Upload exception: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/submit-order', methods=['POST'])
 def submit_order():
