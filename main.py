@@ -17,7 +17,7 @@ app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
 # Enable CORS for Vercel frontend
-CORS(app, origins=['https://graphicdesign-5roc692hq-firaols-projects-2e4e4ad8.vercel.app'])
+CORS(app, origins=['https://graphicdesign-pink.vercel.app'])
 
 # Get environment variables
 token = os.environ.get("token")
@@ -376,7 +376,7 @@ def handle_all_messages(message: Message):
 @app.route('/')
 def home():
     # Redirect to Vercel frontend
-    return f'<script>window.location.href="https://graphicdesign-5roc692hq-firaols-projects-2e4e4ad8.vercel.app"</script>'
+    return f'<script>window.location.href="https://graphicdesign-pink.vercel.app"</script>'
 
 @app.route('/health')
 def health():
@@ -536,7 +536,7 @@ def submit_order():
     requests.post(url, data=payload)
 
     # Redirect back to Vercel frontend with success message
-    return f'<script>window.location.href="https://graphicdesign-5roc692hq-firaols-projects-2e4e4ad8.vercel.app?success=true"</script>'
+    return f'<script>window.location.href="https://graphicdesign-pink.vercel.app?success=true"</script>'
 
 
 def start_bot_polling():
