@@ -9,6 +9,7 @@ from flask import jsonify, url_for
 from google_drive import GoogleDriveManager
 from werkzeug.utils import secure_filename
 import tempfile
+import json
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -24,18 +25,47 @@ bot = telebot.TeleBot(token)
 # Initialize Google Drive
 drive_manager = None
 print("Initializing Google Drive manager...")
-if os.path.exists('credentials.json'):
+
+# Check if Google credentials are available via environment variables
+google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
+google_client_secret = os.environ.get('GOOGLE_CLIENT_SECRET')
+
+if google_client_id and google_client_secret:
     try:
-        print("Found credentials.json, attempting to initialize...")
+        print("Found Google credentials in environment variables")
+        # Create credentials.json from environment variables
+        credentials_data = {
+            "installed": {
+                "client_id": google_client_id,
+                "project_id": "mygraphicsdesign",
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+                "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                "client_secret": google_client_secret,
+                "redirect_uris": ["http://localhost:8080", "urn:ietf:wg:oauth:2.0:oob"]
+            }
+        }
+        
+        import json
+        with open('credentials.json', 'w') as f:
+            json.dump(credentials_data, f)
+        
         drive_manager = GoogleDriveManager()
         print("✅ Google Drive manager initialized successfully")
     except Exception as e:
         print(f"❌ Failed to initialize Google Drive manager: {e}")
-        print("This might be due to missing authentication or network issues")
         print("Google Drive features will be disabled")
         drive_manager = None
+elif os.path.exists('credentials.json'):
+    try:
+        print("Found local credentials.json, attempting to initialize...")
+        drive_manager = GoogleDriveManager()
+        print("✅ Google Drive manager initialized successfully")
+    except Exception as e:
+        print(f"❌ Failed to initialize Google Drive manager: {e}")
+        drive_manager = None
 else:
-    print("❌ credentials.json not found - Google Drive features disabled")
+    print("❌ No Google credentials found - Google Drive features disabled")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
