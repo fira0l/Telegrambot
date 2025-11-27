@@ -8,6 +8,7 @@ import threading
 from flask import jsonify, url_for
 from flask_cors import CORS
 from google_drive import GoogleDriveManager
+from cloudinary_manager import CloudinaryManager
 from werkzeug.utils import secure_filename
 import tempfile
 import json
@@ -34,25 +35,24 @@ CHAT_ID = os.environ.get("CHAT_ID") or "dummy_chat_id"
 # Initialize Telegram bot
 bot = telebot.TeleBot(token)
 
-# Initialize Google Drive (disabled in production)
-drive_manager = None
-print("Initializing Google Drive manager...")
+# Initialize Cloudinary
+cloudinary_manager = None
+try:
+    cloudinary_manager = CloudinaryManager()
+except Exception as e:
+    print(f"❌ Failed to initialize Cloudinary: {e}")
+    cloudinary_manager = None
 
-# Skip Google Drive in production environment (Railway)
-if os.environ.get('RAILWAY_ENVIRONMENT'):
-    print("❌ Google Drive disabled in production environment")
-    drive_manager = None
-elif os.path.exists('credentials.json'):
+# Initialize Google Drive (fallback)
+drive_manager = None
+if not cloudinary_manager and os.path.exists('credentials.json'):
     try:
-        print("Found local credentials.json, attempting to initialize...")
+        print("Initializing Google Drive as fallback...")
         drive_manager = GoogleDriveManager()
         print("✅ Google Drive manager initialized successfully")
     except Exception as e:
         print(f"❌ Failed to initialize Google Drive manager: {e}")
-        print("Google Drive features will be disabled")
         drive_manager = None
-else:
-    print("❌ No Google credentials found - Google Drive features disabled")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -390,6 +390,19 @@ def home():
 def health():
     return {'status': 'ok', 'message': 'Backend is running'}
 
+@app.route('/migrate-images')
+def migrate_images():
+    """Migrate local images to Cloudinary"""
+    if not cloudinary_manager:
+        return jsonify({'error': 'Cloudinary not configured'}), 500
+    
+    try:
+        from migrate_to_cloudinary import migrate_local_images
+        migrate_local_images()
+        return jsonify({'success': True, 'message': 'Migration completed'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 @app.route('/api/images')
 def api_images():
@@ -401,32 +414,16 @@ def api_images():
     
     all_images = []
     
-    # Get local images
-    images_dir = os.path.join(app.static_folder, 'images')
-    print(f"Images directory: {images_dir}")
-    print(f"Directory exists: {os.path.isdir(images_dir)}")
-    
-    if os.path.isdir(images_dir):
-        supported_exts = {'.jpg', '.jpeg', '.png', '.gif', '.webp'}
-        files = os.listdir(images_dir)
-        print(f"Found {len(files)} files in directory")
-        
-        for name in files:
-            ext = os.path.splitext(name)[1].lower()
-            if ext in supported_exts:
-                file_url = url_for('static', filename=f'images/{name}')
-                base = os.path.splitext(name)[0]
-                title = base.replace('_', ' ').replace('-', ' ').title()
-                all_images.append({
-                    'src': file_url,
-                    'title': title,
-                })
-                print(f"Added image: {title} -> {file_url}")
-    
-    print(f"Total images found: {len(all_images)}")
-    
-    # Skip Google Drive for now
-    print("Skipping Google Drive images")
+    # Get Cloudinary images (primary source)
+    if cloudinary_manager:
+        try:
+            cloudinary_images = cloudinary_manager.get_all_images()
+            all_images.extend(cloudinary_images)
+            print(f"Loaded {len(cloudinary_images)} images from Cloudinary")
+        except Exception as e:
+            print(f"Error fetching Cloudinary images: {e}")
+    else:
+        print("❌ Cloudinary not available - no images loaded")
     
     # Calculate pagination
     total = len(all_images)
@@ -477,51 +474,49 @@ def upload_image():
         print("Invalid file type")
         return jsonify({'error': 'Invalid file type'}), 400
     
-    # Try Google Drive first, fallback to local if not available
-    if drive_manager is None:
-        print("Google Drive manager not initialized - falling back to local storage")
+    # Try Cloudinary first
+    if cloudinary_manager:
         try:
-            filename = secure_filename(file.filename)
-            filepath = os.path.join(app.static_folder, 'images', filename)
-            file.save(filepath)
+            print("Processing Cloudinary upload...")
             
-            file_url = url_for('static', filename=f'images/{filename}')
-            return jsonify({
-                'success': True, 
-                'data': {
-                    'url': file_url,
-                    'title': title,
-                    'source': 'local'
-                }
-            })
+            # Read file into memory
+            file_content = file.read()
+            print(f"File size: {len(file_content)} bytes")
+            
+            # Upload to Cloudinary
+            result = cloudinary_manager.upload_image(file_content, file.filename, title)
+            print(f"Cloudinary upload result: {result}")
+            
+            if result:
+                return jsonify({'success': True, 'data': result})
+            else:
+                return jsonify({'error': 'Cloudinary upload failed'}), 500
+                
         except Exception as e:
-            print(f"Local save failed: {e}")
-            return jsonify({'error': 'Upload failed'}), 500
+            print(f"Cloudinary upload exception: {e}")
+            import traceback
+            traceback.print_exc()
+            return jsonify({'error': str(e)}), 500
     
-    # Google Drive upload
+    # Fallback to local storage
+    print("Cloudinary not available - falling back to local storage")
     try:
-        print("Processing Google Drive upload...")
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.static_folder, 'images', filename)
+        file.save(filepath)
         
-        # Read file into memory instead of saving to disk
-        file_content = file.read()
-        file.seek(0)  # Reset file pointer
-        
-        print(f"File size: {len(file_content)} bytes")
-        
-        # Upload to Drive using memory buffer
-        result = drive_manager.upload_image_from_memory(file_content, file.filename, title)
-        print(f"Drive upload result: {result}")
-        
-        if result:
-            return jsonify({'success': True, 'data': result})
-        else:
-            return jsonify({'error': 'Upload failed'}), 500
-            
+        file_url = url_for('static', filename=f'images/{filename}')
+        return jsonify({
+            'success': True, 
+            'data': {
+                'url': file_url,
+                'title': title,
+                'source': 'local'
+            }
+        })
     except Exception as e:
-        print(f"Upload exception: {e}")
-        import traceback
-        traceback.print_exc()
-        return jsonify({'error': str(e)}), 500
+        print(f"Local save failed: {e}")
+        return jsonify({'error': 'Upload failed'}), 500
 
 @app.route('/submit-order', methods=['POST'])
 def submit_order():
