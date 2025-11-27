@@ -11,17 +11,22 @@ from google_drive import GoogleDriveManager
 from werkzeug.utils import secure_filename
 import tempfile
 import json
+import dotenv
 
 # Initialize Flask app
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
-# Enable CORS for Vercel frontend
-CORS(app, origins=['https://graphicdesign-pink.vercel.app'])
+# Enable CORS for Vercel frontend and localhost
+CORS(app, origins=[
+    'https://graphicdesign-pink.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:3000'
+])
 
 # Get environment variables
-token = os.environ.get("token")
-CHAT_ID = os.environ.get("CHAT_ID")
+token = os.environ.get("token") or dotenv.get_key('.env', 'token')
+CHAT_ID = os.environ.get("CHAT_ID") or dotenv.get_key('.env', 'token')
 
 # Initialize Telegram bot
 bot = telebot.TeleBot(token)
