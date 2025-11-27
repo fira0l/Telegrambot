@@ -54,15 +54,7 @@ class CloudinaryManager:
             images = []
             for resource in result.get('resources', []):
                 # Get optimized URL with HTTPS
-                url, _ = cloudinary_url(
-                    resource['public_id'],
-                    format="auto",
-                    quality="auto",
-                    width=800,
-                    height=600,
-                    crop="fill",
-                    secure=True
-                )
+                url = f"https://res.cloudinary.com/{os.environ.get('CLOUDINARY_CLOUD_NAME')}/image/upload/c_fill,h_600,q_auto,w_800/{resource['public_id']}.jpg"
                 
                 # Extract title from context or filename
                 title = resource.get('context', {}).get('custom', {}).get('title', 
