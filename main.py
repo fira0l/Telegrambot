@@ -422,8 +422,24 @@ def api_images():
             print(f"Loaded {len(cloudinary_images)} images from Cloudinary")
         except Exception as e:
             print(f"Error fetching Cloudinary images: {e}")
-    else:
-        print("❌ Cloudinary not available - no images loaded")
+    
+    # Fallback to local images if Cloudinary not available
+    if not cloudinary_manager or len(all_images) == 0:
+        print("Loading local images as fallback...")
+        images_dir = os.path.join(app.static_folder, 'images')
+        if os.path.isdir(images_dir):
+            supported_exts = {'.jpg', '.jpeg', '.png', '.gif', '.webp'}
+            for name in os.listdir(images_dir):
+                ext = os.path.splitext(name)[1].lower()
+                if ext in supported_exts:
+                    file_url = url_for('static', filename=f'images/{name}')
+                    base = os.path.splitext(name)[0]
+                    title = base.replace('_', ' ').replace('-', ' ').title()
+                    all_images.append({
+                        'src': file_url,
+                        'title': title,
+                    })
+            print(f"Loaded {len(all_images)} local images as fallback")
     
     # Calculate pagination
     total = len(all_images)

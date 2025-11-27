@@ -53,14 +53,15 @@ class CloudinaryManager:
             
             images = []
             for resource in result.get('resources', []):
-                # Get optimized URL
+                # Get optimized URL with HTTPS
                 url, _ = cloudinary_url(
                     resource['public_id'],
                     format="auto",
                     quality="auto",
                     width=800,
                     height=600,
-                    crop="fill"
+                    crop="fill",
+                    secure=True
                 )
                 
                 # Extract title from context or filename
