@@ -570,21 +570,41 @@ def submit_order():
 
 
 def start_bot_polling():
-    """Start the bot in polling mode"""
-    try:
-        print("🤖 Starting Telegram Bot in polling mode...")
-        bot.polling(none_stop=True, interval=0, timeout=20)
-    except Exception as e:
-        print(f"❌ Bot polling error: {e}")
-        # Restart polling after a delay
-        import time
-        time.sleep(5)
-        start_bot_polling()
+    """Start the bot in polling mode with conflict handling"""
+    max_retries = 3
+    retry_count = 0
+    
+    while retry_count < max_retries:
+        try:
+            print(f"🤖 Starting Telegram Bot (attempt {retry_count + 1})...")
+            bot.polling(none_stop=True, interval=0, timeout=20)
+            break
+        except Exception as e:
+            retry_count += 1
+            print(f"❌ Bot error (attempt {retry_count}): {e}")
+            if "409" in str(e) or "Conflict" in str(e):
+                print("Bot conflict - another instance running")
+                if retry_count < max_retries:
+                    print(f"Waiting 30 seconds...")
+                    import time
+                    time.sleep(30)
+                else:
+                    print("Max retries reached - bot offline, Flask continues")
+                    break
+            else:
+                import time
+                time.sleep(5)
 
 
 if __name__ == "__main__":
-    # Start bot polling in a separate thread
-    bot_thread = threading.Thread(target=start_bot_polling)
+    # Start bot polling in a separate thread with error isolation
+    def start_bot_safe():
+        try:
+            start_bot_polling()
+        except Exception as e:
+            print(f"Bot thread error (Flask continues): {e}")
+    
+    bot_thread = threading.Thread(target=start_bot_safe)
     bot_thread.daemon = True
     bot_thread.start()
 
