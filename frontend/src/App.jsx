@@ -19,7 +19,7 @@ function App() {
 
   const loadImages = useCallback((page = 1) => {
     setIsLoading(true)
-    fetch(`https://tgbotbackend.up.railway.app/api/images?page=${page}&per_page=6`)
+    fetch(`https://graphicdesign.onrender.com/api/images?page=${page}&per_page=6`)
       .then(async (res) => {
         if (!res.ok) throw new Error('Failed to load images')
         const data = await res.json()
@@ -111,12 +111,14 @@ function App() {
       {[
         { name: 'Portfolio', href: '#portfolio', icon: '🖼️' },
         { name: 'Services', href: '#services', icon: '⚡' },
-        { name: 'Projects', href: '#hire', icon: '🚀' },
+        { name: 'Dev Work', href: 'https://magnificent-dasik-3a3102.netlify.app/', icon: '💻', external: true },
         { name: 'Contact', href: '#contact', icon: '💬' }
       ].map((item) => (
         <a
           key={item.name}
           href={item.href}
+          target={item.external ? '_blank' : '_self'}
+          rel={item.external ? 'noopener noreferrer' : undefined}
           className="flex items-center space-x-2 px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-xl transition-all duration-300 hover:bg-white/80 dark:hover:bg-slate-700/80 group"
         >
           <span className="text-sm opacity-60 group-hover:opacity-100 transition-opacity">{item.icon}</span>
@@ -201,18 +203,24 @@ function App() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-light text-slate-800 dark:text-white mb-4">What We Offer</h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { title: 'UI/UX Design', description: 'User-centered interfaces that combine beauty with functionality and intuitive interactions.' },
               { title: 'Brand Identity', description: 'Comprehensive branding solutions that tell your unique story and connect with your audience.' },
-              { title: 'Digital Strategy', description: 'Data-driven approaches to elevate your digital presence and achieve business objectives.' }
+              { title: 'Digital Strategy', description: 'Data-driven approaches to elevate your digital presence and achieve business objectives.' },
+              { title: 'Web Development', description: 'Full-stack development services to bring your designs to life with modern technologies.', link: 'https://magnificent-dasik-3a3102.netlify.app/' }
             ].map((service, index) => (
               <div key={index} className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 dark:border-slate-700">
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl mb-6 flex items-center justify-center">
                   <span className="text-white font-bold">{index + 1}</span>
                 </div>
                 <h3 className="text-xl font-semibold text-slate-800 dark:text-white mb-4">{service.title}</h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">{service.description}</p>
+                <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-4">{service.description}</p>
+                {service.link && (
+                  <a href={service.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium text-sm transition-colors">
+                    View Portfolio →
+                  </a>
+                )}
               </div>
             ))}
           </div>

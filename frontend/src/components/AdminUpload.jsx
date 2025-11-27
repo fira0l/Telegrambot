@@ -77,7 +77,7 @@ export default function AdminUpload() {
     formData.append('title', title)
 
     try {
-      const res = await fetch('https://tgbotbackend.up.railway.app/api/upload', {
+      const res = await fetch('https://graphicdesign.onrender.com/api/upload', {
         method: 'POST',
         body: formData
       })

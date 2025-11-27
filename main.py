@@ -11,7 +11,7 @@ from google_drive import GoogleDriveManager
 from werkzeug.utils import secure_filename
 import tempfile
 import json
-import dotenv
+
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -25,8 +25,11 @@ CORS(app, origins=[
 ])
 
 # Get environment variables
-token = os.environ.get("token") or dotenv.get_key('.env', 'token')
-CHAT_ID = os.environ.get("CHAT_ID") or dotenv.get_key('.env', 'token')
+from dotenv import load_dotenv
+load_dotenv()
+
+token = os.environ.get("token") or "dummy_token"
+CHAT_ID = os.environ.get("CHAT_ID") or "dummy_chat_id"
 
 # Initialize Telegram bot
 bot = telebot.TeleBot(token)
@@ -394,13 +397,21 @@ def api_images():
     page = int(request.args.get('page', 1))
     per_page = int(request.args.get('per_page', 6))
     
+    print(f"API Images called: page={page}, per_page={per_page}")
+    
     all_images = []
     
     # Get local images
     images_dir = os.path.join(app.static_folder, 'images')
+    print(f"Images directory: {images_dir}")
+    print(f"Directory exists: {os.path.isdir(images_dir)}")
+    
     if os.path.isdir(images_dir):
         supported_exts = {'.jpg', '.jpeg', '.png', '.gif', '.webp'}
-        for name in os.listdir(images_dir):
+        files = os.listdir(images_dir)
+        print(f"Found {len(files)} files in directory")
+        
+        for name in files:
             ext = os.path.splitext(name)[1].lower()
             if ext in supported_exts:
                 file_url = url_for('static', filename=f'images/{name}')
@@ -410,14 +421,12 @@ def api_images():
                     'src': file_url,
                     'title': title,
                 })
+                print(f"Added image: {title} -> {file_url}")
     
-    # Get Google Drive images
-    if drive_manager:
-        try:
-            drive_images = drive_manager.get_all_images()
-            all_images.extend(drive_images)
-        except Exception as e:
-            print(f"Error fetching Google Drive images: {e}")
+    print(f"Total images found: {len(all_images)}")
+    
+    # Skip Google Drive for now
+    print("Skipping Google Drive images")
     
     # Calculate pagination
     total = len(all_images)
@@ -425,7 +434,9 @@ def api_images():
     end = start + per_page
     paginated_images = all_images[start:end]
     
-    return jsonify({
+    print(f"Returning {len(paginated_images)} images for page {page}")
+    
+    response = {
         'images': paginated_images,
         'pagination': {
             'page': page,
@@ -435,7 +446,10 @@ def api_images():
             'has_next': end < total,
             'has_prev': page > 1
         }
-    })
+    }
+    
+    print(f"API Response: {response}")
+    return jsonify(response)
 
 
 @app.route('/api/upload', methods=['POST'])
